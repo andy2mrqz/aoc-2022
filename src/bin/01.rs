@@ -35,6 +35,6 @@ fn part_two(input: &str) -> u32 {
 pub fn main() {
     let input = include_str!("../inputs/01.txt");
 
-    println!("part one: {}", part_one(input));
-    println!("part two: {}", part_two(input));
+    println!("part one: {}", part_one(input)); // 66487
+    println!("part two: {}", part_two(input)); // 197301
 }
