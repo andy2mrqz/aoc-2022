@@ -1,49 +1,68 @@
-//
-// A rock
-// B paper
-// C scissors
-// X lose
-// Y draw
-// Z win
-//
-// score:
-// 1 rock
-// 2 paper
-// 3 scissors
-// 0 lost
-// 3 draw
-// 6 win
+use std::str::FromStr;
 
-fn judge(opponent: &str, you: &str) -> u32 {
-    match opponent {
-        "A" => match you {
-            "X" => 3,
-            "Y" => 6,
-            "Z" => 0,
-            _ => unreachable!(),
-        },
-        "B" => match you {
-            "X" => 0,
-            "Y" => 3,
-            "Z" => 6,
-            _ => unreachable!(),
-        },
-        "C" => match you {
-            "X" => 6,
-            "Y" => 0,
-            "Z" => 3,
-            _ => unreachable!(),
-        },
-        _ => unreachable!(),
+#[repr(u32)]
+#[derive(Clone, Copy)]
+// The value is the score for playing the given hand
+enum Hand {
+    Rock = 1,
+    Paper = 2,
+    Scissors = 3,
+}
+
+impl FromStr for Hand {
+    type Err = String;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            // second part for part 1
+            "A" | "X" => Ok(Self::Rock),
+            "B" | "Y" => Ok(Self::Paper),
+            "C" | "Z" => Ok(Self::Scissors),
+            _ => Err("Invalid".to_owned()),
+        }
     }
 }
 
-fn score(x: &str) -> u32 {
-    match x {
-        "X" => 1,
-        "Y" => 2,
-        "Z" => 3,
-        _ => unreachable!(),
+impl Hand {
+    fn score_vs(&self, opponent: Hand) -> Score {
+        match self {
+            Hand::Rock => match opponent {
+                Hand::Rock => Score::Draw,
+                Hand::Paper => Score::Lose,
+                Hand::Scissors => Score::Win,
+            },
+            Hand::Paper => match opponent {
+                Hand::Rock => Score::Win,
+                Hand::Paper => Score::Draw,
+                Hand::Scissors => Score::Lose,
+            },
+            Hand::Scissors => match opponent {
+                Hand::Rock => Score::Lose,
+                Hand::Paper => Score::Win,
+                Hand::Scissors => Score::Draw,
+            },
+        }
+    }
+}
+
+#[repr(u32)]
+#[derive(Clone, Copy)]
+enum Score {
+    Lose = 0,
+    Draw = 3,
+    Win = 6,
+}
+
+impl FromStr for Score {
+    type Err = String;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "X" => Ok(Self::Lose),
+            "Y" => Ok(Self::Draw),
+            "Z" => Ok(Self::Win),
+            _ => Err("Invalid".to_owned()),
+        }
     }
 }
 
@@ -53,10 +72,10 @@ fn part_one(input: &str) -> u32 {
         .map(|line| {
             let chars: Vec<&str> = line.split(' ').collect();
 
-            let opponent = chars[0];
-            let you = chars[1];
+            let opponent: Hand = chars[0].parse().unwrap();
+            let you: Hand = chars[1].parse().unwrap();
 
-            judge(opponent, you) + score(you)
+            you as u32 + you.score_vs(opponent) as u32
         })
         .sum()
 }
@@ -67,36 +86,23 @@ fn part_two(input: &str) -> u32 {
         .map(|line| {
             let chars: Vec<&str> = line.split(' ').collect();
 
-            let opponent = chars[0];
-            let ending = chars[1];
+            let opponent: Hand = chars[0].parse().unwrap();
+            let ending: Score = chars[1].parse().unwrap();
 
-            match ending {
-                // lose
-                "X" => match opponent {
-                    "A" => 3,
-                    "B" => 1,
-                    "C" => 2,
-                    _ => unreachable!(),
-                },
-                // draw
-                "Y" => {
-                    3 + match opponent {
-                        "A" => 1,
-                        "B" => 2,
-                        "C" => 3,
-                        _ => unreachable!(),
-                    }
-                }
-                "Z" => {
-                    6 + match opponent {
-                        "A" => 2,
-                        "B" => 3,
-                        "C" => 1,
-                        _ => unreachable!(),
-                    }
-                }
-                _ => unreachable!(),
-            }
+            ending as u32
+                + match ending {
+                    Score::Draw => opponent,
+                    Score::Lose => match opponent {
+                        Hand::Rock => Hand::Scissors,
+                        Hand::Paper => Hand::Rock,
+                        Hand::Scissors => Hand::Paper,
+                    },
+                    Score::Win => match opponent {
+                        Hand::Rock => Hand::Paper,
+                        Hand::Paper => Hand::Scissors,
+                        Hand::Scissors => Hand::Rock,
+                    },
+                } as u32
         })
         .sum()
 }
