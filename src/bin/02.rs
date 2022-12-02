@@ -1,7 +1,7 @@
 use std::str::FromStr;
 
 #[repr(u32)]
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, PartialEq)]
 // The value is the score for playing the given hand
 enum Hand {
     Rock = 1,
@@ -25,22 +25,36 @@ impl FromStr for Hand {
 
 impl Hand {
     fn score_vs(&self, opponent: Hand) -> Score {
+        if self == &opponent {
+            Score::Draw
+        } else if self.wins_against() == opponent {
+            Score::Win
+        } else {
+            Score::Lose
+        }
+    }
+
+    fn wins_against(&self) -> Hand {
         match self {
-            Hand::Rock => match opponent {
-                Hand::Rock => Score::Draw,
-                Hand::Paper => Score::Lose,
-                Hand::Scissors => Score::Win,
-            },
-            Hand::Paper => match opponent {
-                Hand::Rock => Score::Win,
-                Hand::Paper => Score::Draw,
-                Hand::Scissors => Score::Lose,
-            },
-            Hand::Scissors => match opponent {
-                Hand::Rock => Score::Lose,
-                Hand::Paper => Score::Win,
-                Hand::Scissors => Score::Draw,
-            },
+            Hand::Rock => Hand::Scissors,
+            Hand::Paper => Hand::Rock,
+            Hand::Scissors => Hand::Paper,
+        }
+    }
+
+    fn loses_against(&self) -> Hand {
+        match self {
+            Hand::Rock => Hand::Paper,
+            Hand::Paper => Hand::Scissors,
+            Hand::Scissors => Hand::Rock,
+        }
+    }
+
+    fn hand_to_play(desired_score: Score, opponent: Hand) -> Hand {
+        match desired_score {
+            Score::Draw => opponent,
+            Score::Win => opponent.loses_against(),
+            Score::Lose => opponent.wins_against(),
         }
     }
 }
@@ -87,22 +101,9 @@ fn part_two(input: &str) -> u32 {
             let chars: Vec<&str> = line.split(' ').collect();
 
             let opponent: Hand = chars[0].parse().unwrap();
-            let ending: Score = chars[1].parse().unwrap();
+            let planned_score: Score = chars[1].parse().unwrap();
 
-            ending as u32
-                + match ending {
-                    Score::Draw => opponent,
-                    Score::Lose => match opponent {
-                        Hand::Rock => Hand::Scissors,
-                        Hand::Paper => Hand::Rock,
-                        Hand::Scissors => Hand::Paper,
-                    },
-                    Score::Win => match opponent {
-                        Hand::Rock => Hand::Paper,
-                        Hand::Paper => Hand::Scissors,
-                        Hand::Scissors => Hand::Rock,
-                    },
-                } as u32
+            planned_score as u32 + Hand::hand_to_play(planned_score, opponent) as u32
         })
         .sum()
 }
