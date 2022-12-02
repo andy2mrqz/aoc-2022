@@ -1,3 +1,4 @@
+use core::fmt::Debug;
 use std::str::FromStr;
 
 #[repr(u32)]
@@ -15,10 +16,10 @@ impl FromStr for Hand {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
             // second part for part 1
-            "A" | "X" => Ok(Self::Rock),
-            "B" | "Y" => Ok(Self::Paper),
-            "C" | "Z" => Ok(Self::Scissors),
-            _ => Err("Invalid".to_owned()),
+            "A" | "X" => Ok(Hand::Rock),
+            "B" | "Y" => Ok(Hand::Paper),
+            "C" | "Z" => Ok(Hand::Scissors),
+            _ => Err("Invalid hand".to_owned()),
         }
     }
 }
@@ -72,35 +73,39 @@ impl FromStr for Score {
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
-            "X" => Ok(Self::Lose),
-            "Y" => Ok(Self::Draw),
-            "Z" => Ok(Self::Win),
-            _ => Err("Invalid".to_owned()),
+            "X" => Ok(Score::Lose),
+            "Y" => Ok(Score::Draw),
+            "Z" => Ok(Score::Win),
+            _ => Err("Invalid score".to_owned()),
         }
     }
 }
 
-fn play(input: &str, score_fn: &dyn Fn(Vec<&str>) -> u32) -> u32 {
+fn play<L: FromStr, R: FromStr>(input: &str, score_fn: &dyn Fn(L, R) -> u32) -> u32
+where
+    <L as FromStr>::Err: Debug,
+    <R as FromStr>::Err: Debug,
+{
     input
         .lines()
-        .map(|line| score_fn(line.split(' ').collect()))
+        .map(|line| {
+            let chars: Vec<&str> = line.split(' ').collect();
+            let l: L = chars[0].parse().unwrap();
+            let r: R = chars[1].parse().unwrap();
+
+            score_fn(l, r)
+        })
         .sum()
 }
 
 fn part_one(input: &str) -> u32 {
-    play(input, &|chars: Vec<&str>| {
-        let opponent: Hand = chars[0].parse().unwrap();
-        let you: Hand = chars[1].parse().unwrap();
-
+    play(input, &|opponent: Hand, you: Hand| {
         you as u32 + you.score_vs(opponent) as u32
     })
 }
 
 fn part_two(input: &str) -> u32 {
-    play(input, &|chars: Vec<&str>| {
-        let opponent: Hand = chars[0].parse().unwrap();
-        let planned_score: Score = chars[1].parse().unwrap();
-
+    play(input, &|opponent: Hand, planned_score: Score| {
         planned_score as u32 + Hand::hand_to_play(planned_score, opponent) as u32
     })
 }
