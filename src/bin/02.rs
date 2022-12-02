@@ -2,9 +2,9 @@
 // A rock
 // B paper
 // C scissors
-// X rock
-// Y paper
-// Z scissors
+// X lose
+// Y draw
+// Z win
 //
 // score:
 // 1 rock
@@ -47,11 +47,7 @@ fn score(x: &str) -> u32 {
     }
 }
 
-fn play(opponent: &str, you: &str) -> u32 {
-    judge(opponent, you) + score(you)
-}
-
-fn parse_input(input: &str) -> Vec<u32> {
+fn part_one(input: &str) -> u32 {
     input
         .lines()
         .map(|line| {
@@ -60,24 +56,54 @@ fn parse_input(input: &str) -> Vec<u32> {
             let opponent = chars[0];
             let you = chars[1];
 
-            play(opponent, you)
+            judge(opponent, you) + score(you)
         })
-        .collect()
-}
-
-fn part_one(input: &str) -> u32 {
-    parse_input(input).iter().sum()
+        .sum()
 }
 
 fn part_two(input: &str) -> u32 {
-    parse_input(input);
+    input
+        .lines()
+        .map(|line| {
+            let chars: Vec<&str> = line.split(' ').collect();
 
-    10
+            let opponent = chars[0];
+            let ending = chars[1];
+
+            match ending {
+                // lose
+                "X" => match opponent {
+                    "A" => 3,
+                    "B" => 1,
+                    "C" => 2,
+                    _ => unreachable!(),
+                },
+                // draw
+                "Y" => {
+                    3 + match opponent {
+                        "A" => 1,
+                        "B" => 2,
+                        "C" => 3,
+                        _ => unreachable!(),
+                    }
+                }
+                "Z" => {
+                    6 + match opponent {
+                        "A" => 2,
+                        "B" => 3,
+                        "C" => 1,
+                        _ => unreachable!(),
+                    }
+                }
+                _ => unreachable!(),
+            }
+        })
+        .sum()
 }
 
 pub fn main() {
     let input = include_str!("../inputs/02.txt");
 
-    println!("part one: {}", part_one(input));
-    println!("part two: {}", part_two(input));
+    println!("part one: {}", part_one(input)); // 11666
+    println!("part two: {}", part_two(input)); // 12767
 }
