@@ -80,32 +80,29 @@ impl FromStr for Score {
     }
 }
 
-fn part_one(input: &str) -> u32 {
+fn play(input: &str, score_fn: &dyn Fn(Vec<&str>) -> u32) -> u32 {
     input
         .lines()
-        .map(|line| {
-            let chars: Vec<&str> = line.split(' ').collect();
-
-            let opponent: Hand = chars[0].parse().unwrap();
-            let you: Hand = chars[1].parse().unwrap();
-
-            you as u32 + you.score_vs(opponent) as u32
-        })
+        .map(|line| score_fn(line.split(' ').collect()))
         .sum()
 }
 
+fn part_one(input: &str) -> u32 {
+    play(input, &|chars: Vec<&str>| {
+        let opponent: Hand = chars[0].parse().unwrap();
+        let you: Hand = chars[1].parse().unwrap();
+
+        you as u32 + you.score_vs(opponent) as u32
+    })
+}
+
 fn part_two(input: &str) -> u32 {
-    input
-        .lines()
-        .map(|line| {
-            let chars: Vec<&str> = line.split(' ').collect();
+    play(input, &|chars: Vec<&str>| {
+        let opponent: Hand = chars[0].parse().unwrap();
+        let planned_score: Score = chars[1].parse().unwrap();
 
-            let opponent: Hand = chars[0].parse().unwrap();
-            let planned_score: Score = chars[1].parse().unwrap();
-
-            planned_score as u32 + Hand::hand_to_play(planned_score, opponent) as u32
-        })
-        .sum()
+        planned_score as u32 + Hand::hand_to_play(planned_score, opponent) as u32
+    })
 }
 
 pub fn main() {
