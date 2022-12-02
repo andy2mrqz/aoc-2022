@@ -16,5 +16,5 @@ input file should be placed in `./src/inputs` (format 01.txt).
 cargo run --bin 01
 
 # or all at once
-cargo run --bin aoc-2022
+cargo run
 ```
