@@ -3,31 +3,14 @@ use std::collections::HashSet;
 fn parse_input_pt1(input: &str) -> Vec<char> {
     input
         .lines()
-        .map(|line| {
-            let count = line.len();
+        .flat_map(|line| {
+            let half = line.len() / 2;
+            let first_set: HashSet<char> = line[..half].chars().collect();
+            let second_half = &line[half..];
 
-            let first_half = &line[0..(count / 2)];
-            let second_half = &line[(count / 2)..];
-
-            let first_chars: HashSet<char> = first_half.chars().collect();
-
-            second_half
-                .chars()
-                .find(|c| first_chars.contains(&c))
-                .unwrap()
+            second_half.chars().find(|c| first_set.contains(&c))
         })
         .collect()
-}
-
-fn part_one(input: &str) -> u32 {
-    parse_input_pt1(input)
-        .iter()
-        .map(|c| match *c as u32 {
-            65..=90 => *c as u32 - 38,
-            97..=122 => *c as u32 - 96,
-            _ => unreachable!(),
-        })
-        .sum()
 }
 
 fn parse_input_pt2(input: &str) -> Vec<char> {
@@ -35,7 +18,7 @@ fn parse_input_pt2(input: &str) -> Vec<char> {
         .lines()
         .collect::<Vec<&str>>()
         .chunks(3)
-        .map(|chunks| {
+        .flat_map(|chunks| {
             let first_set: HashSet<char> = chunks[0].chars().collect();
             let second_set: HashSet<char> = chunks[1].chars().collect();
             let third_chunk = chunks[2];
@@ -43,25 +26,31 @@ fn parse_input_pt2(input: &str) -> Vec<char> {
             third_chunk
                 .chars()
                 .find(|c| first_set.contains(&c) && second_set.contains(&c))
-                .unwrap()
         })
         .collect()
 }
 
-fn part_two(input: &str) -> u32 {
-    parse_input_pt2(input)
+fn sum_priorities(items: Vec<char>) -> u32 {
+    items
         .iter()
-        .map(|c| match *c as u32 {
-            65..=90 => *c as u32 - 38,
-            97..=122 => *c as u32 - 96,
+        .map(|c| match *c {
+            'A'..='Z' => *c as u32 - 'A' as u32 + 27, // 'A' has priority 27
+            'a'..='z' => *c as u32 - 'a' as u32 + 1,  // 'a' has priority 1
             _ => unreachable!(),
         })
         .sum()
 }
 
+fn part_one(input: &str) -> u32 {
+    sum_priorities(parse_input_pt1(input))
+}
+fn part_two(input: &str) -> u32 {
+    sum_priorities(parse_input_pt2(input))
+}
+
 pub fn main() {
     let input = include_str!("../inputs/03.txt");
 
-    println!("part one: {}", part_one(input)); //
-    println!("part two: {}", part_two(input)); //
+    println!("part one: {}", part_one(input)); // 7875
+    println!("part two: {}", part_two(input)); // 2479
 }
