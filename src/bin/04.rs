@@ -6,13 +6,13 @@ fn count_overlaps_where(input: &str, overlap_fn: &dyn Fn(&Set, &Set) -> bool) ->
     input
         .lines()
         .filter(|assignments| {
-            let assignments: Vec<&str> = assignments.split(",").collect();
+            let assignments: Vec<u32> = assignments
+                .split(['-', ','])
+                .flat_map(|n| n.parse())
+                .collect();
 
-            let left_range: Vec<u32> = assignments[0].split("-").flat_map(|n| n.parse()).collect();
-            let left_set: HashSet<u32> = (left_range[0]..=left_range[1]).collect();
-
-            let right_range: Vec<u32> = assignments[1].split("-").flat_map(|n| n.parse()).collect();
-            let right_set: HashSet<u32> = (right_range[0]..=right_range[1]).collect();
+            let left_set: HashSet<u32> = (assignments[0]..=assignments[1]).collect();
+            let right_set: HashSet<u32> = (assignments[2]..=assignments[3]).collect();
 
             overlap_fn(&left_set, &right_set) || overlap_fn(&right_set, &left_set)
         })
