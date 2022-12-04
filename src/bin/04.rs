@@ -1,6 +1,8 @@
 use std::ops::RangeInclusive;
 
-fn parse_input(input: &str) -> Vec<(RangeInclusive<u32>, RangeInclusive<u32>)> {
+type Range = RangeInclusive<u32>;
+
+fn overlap_count_where(input: &str, overlap_fn: &dyn Fn(&(Range, Range)) -> bool) -> usize {
     input
         .lines()
         .map(|assignments| {
@@ -14,29 +16,23 @@ fn parse_input(input: &str) -> Vec<(RangeInclusive<u32>, RangeInclusive<u32>)> {
 
             (left_range, right_range)
         })
-        .collect()
+        .filter(overlap_fn)
+        .count()
 }
 
 fn part_one(input: &str) -> usize {
-    parse_input(input)
-        .iter()
-        .filter(|(left_range, right_range)| {
-            left_range.contains(right_range.start()) && left_range.contains(right_range.end())
-                || right_range.contains(left_range.start())
-                    && right_range.contains(left_range.end())
-        })
-        .count()
+    overlap_count_where(input, &|(left_range, right_range)| {
+        left_range.contains(right_range.start()) && left_range.contains(right_range.end())
+            || right_range.contains(left_range.start()) && right_range.contains(left_range.end())
+    })
 }
 fn part_two(input: &str) -> usize {
-    parse_input(input)
-        .iter()
-        .filter(|(left_range, right_range)| {
-            left_range.contains(right_range.start())
-                || left_range.contains(right_range.end())
-                || right_range.contains(left_range.start())
-                || right_range.contains(left_range.end())
-        })
-        .count()
+    overlap_count_where(input, &|(left_range, right_range)| {
+        left_range.contains(right_range.start())
+            || left_range.contains(right_range.end())
+            || right_range.contains(left_range.start())
+            || right_range.contains(left_range.end())
+    })
 }
 
 pub fn main() {
