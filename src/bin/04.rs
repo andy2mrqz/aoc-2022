@@ -2,7 +2,7 @@ use std::collections::HashSet;
 
 type Set = HashSet<u32>;
 
-fn overlap_count_where(input: &str, overlap_fn: &dyn Fn(&Set, &Set) -> bool) -> usize {
+fn count_overlaps_where(input: &str, overlap_fn: &dyn Fn(&Set, &Set) -> bool) -> usize {
     input
         .lines()
         .map(|assignments| {
@@ -16,19 +16,15 @@ fn overlap_count_where(input: &str, overlap_fn: &dyn Fn(&Set, &Set) -> bool) -> 
 
             (left_set, right_set)
         })
-        .filter(|(left_set, right_set)| {
-            overlap_fn(left_set, right_set) || overlap_fn(right_set, left_set)
-        })
+        .filter(|(set_a, set_b)| overlap_fn(set_a, set_b) || overlap_fn(set_b, set_a))
         .count()
 }
 
 fn part_one(input: &str) -> usize {
-    overlap_count_where(input, &|left_set, right_set| left_set.is_subset(&right_set))
+    count_overlaps_where(input, &|set_a, set_b| set_a.is_subset(set_b))
 }
 fn part_two(input: &str) -> usize {
-    overlap_count_where(input, &|left_set, right_set| {
-        !left_set.is_disjoint(right_set)
-    })
+    count_overlaps_where(input, &|set_a, set_b| !set_a.is_disjoint(set_b))
 }
 
 pub fn main() {
