@@ -9,10 +9,9 @@ fn parse_stacks(stacks: Rev<Lines>) -> HashMap<usize, Vec<char>> {
                 map.insert(stack_num.parse().unwrap(), vec![]);
             }
         }
-        for i in 1..=(map.keys().len()) {
-            let item = line.chars().nth(4 * i - 3).unwrap();
+        for (i, item) in line.chars().skip(1).step_by(4).enumerate() {
             if item.is_alphabetic() {
-                map.get_mut(&i).map(|stack| stack.push(item));
+                map.get_mut(&(i + 1)).map(|stack| stack.push(item));
             }
         }
     }
