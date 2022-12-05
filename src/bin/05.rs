@@ -1,75 +1,68 @@
-use std::collections::HashMap;
+use itertools::Itertools;
+use std::{collections::HashMap, iter::Rev, str::Lines};
 
-fn parse_stacks(stacks: &str) -> HashMap<usize, Vec<char>> {
+fn parse_stacks(stacks: Rev<Lines>) -> HashMap<usize, Vec<char>> {
     let mut map = HashMap::new();
-
-    for (line_idx, line) in stacks.lines().rev().enumerate() {
-        if line_idx == 0 {
-            for (stack_idx, _) in line.split_whitespace().enumerate() {
-                map.insert(stack_idx + 1, vec![]);
+    for (idx, line) in stacks.enumerate() {
+        if idx == 0 {
+            for stack_num in line.split_whitespace() {
+                map.insert(stack_num.parse().unwrap(), vec![]);
             }
-            continue;
         }
-
         for i in 1..=(map.keys().len()) {
-            let item = line.chars().nth(((i - 1) * 4) + 1).unwrap();
-            if item != ' ' {
-                let stack = map.get_mut(&i).unwrap();
-                stack.push(item);
+            let item = line.chars().nth(4 * i - 3).unwrap();
+            if item.is_alphabetic() {
+                map.get_mut(&i).map(|stack| stack.push(item));
             }
         }
     }
-
     map
 }
 
-fn solve(input: &str) -> String {
-    let parts: Vec<&str> = input.split("\n\n").collect();
-    let mut stacks = parse_stacks(parts[0]);
+fn solve(input: &str, one_at_a_time: bool) -> String {
+    let (stacks, instructions) = input.split("\n\n").collect_tuple().unwrap();
+    let mut stacks = parse_stacks(stacks.lines().rev());
 
-    for instruction in parts[1].lines() {
-        let parts: Vec<&str> = instruction.split_whitespace().collect();
-        let qty: usize = parts[1].parse().unwrap();
+    for instruction in instructions.lines() {
+        let (_, qty, _, from, _, to) = instruction.split_whitespace().collect_tuple().unwrap();
+        let qty = qty.parse().unwrap();
 
-        let mut to_move: Vec<char> = vec![];
+        let mut items_to_move: Vec<char> = vec![];
         {
-            let from = stacks.get_mut(&parts[3].parse().unwrap()).unwrap();
+            let from = stacks.get_mut(&from.parse().unwrap()).unwrap();
             for _ in 0..qty {
-                to_move.push(from.pop().unwrap());
+                items_to_move.push(from.pop().unwrap());
             }
         }
         {
-            let to = stacks.get_mut(&parts[5].parse().unwrap()).unwrap();
+            if one_at_a_time {
+                items_to_move.reverse()
+            }
+            let to = stacks.get_mut(&to.parse().unwrap()).unwrap();
             for _ in 0..qty {
-                to.push(to_move.pop().unwrap());
+                to.push(items_to_move.pop().unwrap());
             }
         }
     }
 
     let mut res: String = "".to_string();
     for stack_idx in 1..=stacks.len() {
-        res = format!(
-            "{}{}",
-            res,
-            stacks.get_mut(&stack_idx).unwrap().pop().unwrap()
-        );
+        let top = stacks.get_mut(&stack_idx).unwrap().pop().unwrap();
+        res = format!("{}{}", res, top);
     }
-
     res
 }
 
 fn part_one(input: &str) -> String {
-    solve(input)
+    solve(input, true)
 }
-fn part_two(input: &str) -> &str {
-    solve(input);
-
-    "MAC"
+fn part_two(input: &str) -> String {
+    solve(input, false)
 }
 
 pub fn main() {
     let input = include_str!("../inputs/05.txt");
 
-    println!("part one: {}", part_one(input)); //
-    println!("part two: {}", part_two(input)); //
+    println!("part one: {}", part_one(input)); // TLNGFGMFN
+    println!("part two: {}", part_two(input)); // FGLQJCMBD
 }
