@@ -3,14 +3,14 @@
 My solutions to Advent of Code 2022. Each year I like to try in a
 language I'm interested in or may be using soon.
 
-| Day | Stars |
-| --- | ----- |
-| 1   | ⭐⭐  |
-| 2   | ⭐⭐  |
-| 3   | ⭐⭐  |
-| 4   | ⭐⭐  |
-| 5   | ⭐⭐  |
-| 6   | ⭐⭐  |
+| Day                                      | Stars |
+| ---------------------------------------- | ----- |
+| [1](https://adventofcode.com/2022/day/1) | ⭐⭐  |
+| [2](https://adventofcode.com/2022/day/2) | ⭐⭐  |
+| [3](https://adventofcode.com/2022/day/3) | ⭐⭐  |
+| [4](https://adventofcode.com/2022/day/4) | ⭐⭐  |
+| [5](https://adventofcode.com/2022/day/5) | ⭐⭐  |
+| [6](https://adventofcode.com/2022/day/6) | ⭐⭐  |
 
 ## ⭐ Running the code
 
