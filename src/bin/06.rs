@@ -1,31 +1,19 @@
 use itertools::Itertools;
 
-fn solve(input: &str, start: bool) -> usize {
-    let window = input.chars().collect::<Vec<char>>();
+fn solve(input: &str, uniq_char_count: usize) -> usize {
+    let chars: Vec<char> = input.chars().collect();
+    let marker_start_idx = chars
+        .windows(uniq_char_count)
+        .find_position(|c| c.iter().unique().collect::<Vec<&char>>().len() == c.len())
+        .unwrap()
+        .0;
 
-    let offset = if start { 14 } else { 4 };
-
-    let thing = window
-        .windows(offset)
-        .enumerate()
-        .find(|(_, c)| c.iter().unique().collect::<Vec<&char>>().len() == c.len())
-        .unwrap();
-
-    let blah = thing.0;
-
-    blah + offset
-}
-
-fn part_one(input: &str) -> usize {
-    solve(input, false)
-}
-fn part_two(input: &str) -> usize {
-    solve(input, true)
+    uniq_char_count + marker_start_idx
 }
 
 pub fn main() {
     let input = include_str!("../inputs/06.txt");
 
-    println!("part one: {}", part_one(input)); //
-    println!("part two: {}", part_two(input)); //
+    println!("part one: {}", solve(input, 4)); // 1134
+    println!("part two: {}", solve(input, 14)); // 2263
 }
