@@ -52,16 +52,9 @@ fn solve(input: &str, one_at_a_time: bool) -> String {
     res
 }
 
-fn part_one(input: &str) -> String {
-    solve(input, true)
-}
-fn part_two(input: &str) -> String {
-    solve(input, false)
-}
-
 pub fn main() {
     let input = include_str!("../inputs/05.txt");
 
-    println!("part one: {}", part_one(input)); // TLNGFGMFN
-    println!("part two: {}", part_two(input)); // FGLQJCMBD
+    println!("part one: {}", solve(input, true)); // TLNGFGMFN
+    println!("part two: {}", solve(input, false)); // FGLQJCMBD
 }
