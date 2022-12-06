@@ -3,14 +3,14 @@
 My solutions to Advent of Code 2022. Each year I like to try in a
 language I'm interested in or may be using soon.
 
-| Day                                      | Stars |
-| ---------------------------------------- | ----- |
-| [1](https://adventofcode.com/2022/day/1) | ⭐⭐  |
-| [2](https://adventofcode.com/2022/day/2) | ⭐⭐  |
-| [3](https://adventofcode.com/2022/day/3) | ⭐⭐  |
-| [4](https://adventofcode.com/2022/day/4) | ⭐⭐  |
-| [5](https://adventofcode.com/2022/day/5) | ⭐⭐  |
-| [6](https://adventofcode.com/2022/day/6) | ⭐⭐  |
+| Puzzle                                                         | Code                     | Part 1 | Part 2 |
+| -------------------------------------------------------------- | ------------------------ | ------ | ------ |
+| [Calorie Counting](https://adventofcode.com/2022/day/1)        | [Day 1](./src/bin/01.rs) | ⭐     | ⭐     |
+| [Rock Paper Scissors](https://adventofcode.com/2022/day/2)     | [Day 2](./src/bin/02.rs) | ⭐     | ⭐     |
+| [Rucksack Reorganization](https://adventofcode.com/2022/day/3) | [Day 3](./src/bin/03.rs) | ⭐     | ⭐     |
+| [Camp Cleanup](https://adventofcode.com/2022/day/4)            | [Day 4](./src/bin/04.rs) | ⭐     | ⭐     |
+| [Supply Stacks](https://adventofcode.com/2022/day/5)           | [Day 5](./src/bin/05.rs) | ⭐     | ⭐     |
+| [Tuning Trouble](https://adventofcode.com/2022/day/6)          | [Day 6](./src/bin/06.rs) | ⭐     | ⭐     |
 
 ## ⭐ Running the code
 
