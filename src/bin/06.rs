@@ -1,26 +1,26 @@
 use itertools::Itertools;
 
-fn solve(input: &str) -> usize {
+fn solve(input: &str, start: bool) -> usize {
     let window = input.chars().collect::<Vec<char>>();
 
+    let offset = if start { 14 } else { 4 };
+
     let thing = window
-        .windows(4)
+        .windows(offset)
         .enumerate()
         .find(|(_, c)| c.iter().unique().collect::<Vec<&char>>().len() == c.len())
         .unwrap();
 
     let blah = thing.0;
 
-    blah + 4
+    blah + offset
 }
 
 fn part_one(input: &str) -> usize {
-    solve(input)
+    solve(input, false)
 }
 fn part_two(input: &str) -> usize {
-    solve(input);
-
-    10
+    solve(input, true)
 }
 
 pub fn main() {
