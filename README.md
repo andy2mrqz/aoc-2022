@@ -11,6 +11,7 @@ language I'm interested in or may be using soon.
 | [Camp Cleanup](https://adventofcode.com/2022/day/4)            | [Day 4](./src/bin/04.rs) | ⭐     | ⭐     |
 | [Supply Stacks](https://adventofcode.com/2022/day/5)           | [Day 5](./src/bin/05.rs) | ⭐     | ⭐     |
 | [Tuning Trouble](https://adventofcode.com/2022/day/6)          | [Day 6](./src/bin/06.rs) | ⭐     | ⭐     |
+| [No Space Left On Device](https://adventofcode.com/2022/day/7) | [Day 7](./src/bin/07.rs) | ⭐     | ⭐     |
 
 ## ⭐ Running the code
 
