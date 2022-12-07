@@ -9,7 +9,7 @@ fn dir_size(dir: Vec<(usize, &str)>) -> usize {
     dir.iter().fold(0, |acc, (size, _)| acc + size)
 }
 
-fn solve(input: &str) -> usize {
+fn get_sums(input: &str) -> HashMap<String, usize> {
     let mut path = Vec::new();
     let mut stats: HashMap<String, Vec<(usize, &str)>> = HashMap::new();
 
@@ -33,7 +33,6 @@ fn solve(input: &str) -> usize {
         }
     }
 
-    // println!("{:#?}", stats);
     let keys: Vec<&String> = stats.keys().collect();
 
     let mut sums: HashMap<String, usize> = HashMap::new();
@@ -46,8 +45,14 @@ fn solve(input: &str) -> usize {
         }
         sums.insert(k, sum);
     }
-    // println!("{:#?}", sums);
-    let max: usize = 100000;
+
+    sums
+}
+
+fn part_one(input: &str) -> usize {
+    let sums = get_sums(input);
+
+    let max = 100_000;
     let filtered_paths = sums
         .iter()
         .filter(|(_, size)| size <= &&max)
@@ -58,10 +63,28 @@ fn solve(input: &str) -> usize {
         .fold(0, |acc: usize, (_, size)| acc + **size)
 }
 
+fn part_two(input: &str) -> usize {
+    let sums = get_sums(input);
+
+    let total_space = 70_000_000;
+    let used_space = sums.get("/").unwrap();
+    let unused_space = total_space - used_space;
+    let desired_space = 30_000_000;
+    let amount_to_free = desired_space - unused_space;
+
+    let filtered_paths = sums
+        .iter()
+        .filter(|(_, size)| size >= &&amount_to_free)
+        .collect::<Vec<_>>();
+
+    let sizes: Vec<usize> = filtered_paths.iter().map(|(_, size)| **size).collect();
+
+    *sizes.iter().min().unwrap()
+}
+
 pub fn main() {
     let input = include_str!("../inputs/07.txt");
 
-    println!("part one: {}", solve(input)); //
-    println!();
-    // println!("part two: {}", solve(input)); //
+    println!("part one: {}", part_one(input)); // 1315285
+    println!("part two: {}", part_two(input)); //
 }
