@@ -1,76 +1,65 @@
 use itertools::Itertools;
+use std::collections::HashMap;
 
-#[derive(Clone, Debug, Hash, Eq, PartialEq)]
-struct Dir {
-    name: String,
-    parent: Option<Box<Dir>>,
-    children: Vec<Content>
+fn abs_path(path: &Vec<String>) -> String {
+    format!("/{}", path.iter().skip(1).join("/"))
 }
 
-#[derive(Clone, Debug, Hash, Eq, PartialEq)]
-struct File {
-    name: String,
-    size: u32,
-    parent: Option<Box<Dir>>,
-}
-
-#[derive(Clone, Debug, Hash, PartialEq, Eq)]
-enum Content {
-    F(File),
-    D(Box<Dir>),
+fn dir_size(dir: Vec<(usize, &str)>) -> usize {
+    dir.iter().fold(0, |acc, (size, _)| acc + size)
 }
 
 fn solve(input: &str) -> usize {
-    let mut pwd: Dir = Dir {
-        name: "/".to_string(),
-        parent: None,
-        children: Vec::new()
-    };
+    let mut path = Vec::new();
+    let mut stats: HashMap<String, Vec<(usize, &str)>> = HashMap::new();
 
-    for line in input.lines().skip(1) {
-        println!("{}", line);
+    for line in input.lines() {
         if line == "$ cd .." {
-            if let Some(parent) = pwd.parent {
-                pwd = *parent;
-            }
+            path.pop();
         } else if line.starts_with("$ cd ") {
-            let dir_name = line.split("$ cd ").collect::<Vec<&str>>()[1].to_string();
-            let dir = Dir {
-                name: dir_name.clone(),
-                parent: Some(Box::new(pwd.clone())),
-                children: Vec::new()
-            };
-            let content = Content::D(Box::new(dir.clone()));
-            pwd.children.push(content);
-            pwd = dir;
+            let dir_name = line.split("$ cd ").collect::<Vec<&str>>()[1].to_owned();
+            path.push(dir_name);
+            stats.insert(abs_path(&path), Vec::new());
         } else if line.starts_with("dir") {
-            let dir_name = line.split("dir ").collect::<Vec<&str>>()[1].to_string();
-            let dir = Dir {
-                name: dir_name,
-                parent: Some(Box::new(pwd.clone())),
-                children: Vec::new()
-            };
-            pwd.children.push(Content::D(Box::new(dir.clone())));
+            let dir_name = line.split("dir ").collect::<Vec<&str>>()[1].to_owned();
+            path.push(dir_name);
+            stats.insert(abs_path(&path), Vec::new());
+            path.pop();
         } else if line.starts_with(|c: char| c.is_numeric()) {
             let (size, name) = line.split(" ").collect_tuple().unwrap();
-            let size: u32 = size.parse().unwrap();
-
-            let file = File {
-                name: name.to_string(),
-                size,
-                parent: Some(Box::new(pwd.clone()))
-            };
-            pwd.children.push(Content::F(file.clone()));
+            let size: usize = size.parse().unwrap();
+            let items = stats.get_mut(&abs_path(&path)).unwrap();
+            items.push((size, name));
         }
     }
 
-    println!("{:?}", pwd);
+    // println!("{:#?}", stats);
+    let keys: Vec<&String> = stats.keys().collect();
 
-    10
+    let mut sums: HashMap<String, usize> = HashMap::new();
+    for (k, v) in stats.clone() {
+        let mut sum = dir_size(v);
+        for key in keys.clone() {
+            if key != &k && key.starts_with(&k) {
+                sum += dir_size(stats.get(key).unwrap().to_vec());
+            }
+        }
+        sums.insert(k, sum);
+    }
+    // println!("{:#?}", sums);
+    let max: usize = 100000;
+    let filtered_paths = sums
+        .iter()
+        .filter(|(_, size)| size <= &&max)
+        .collect::<Vec<_>>();
+
+    filtered_paths
+        .iter()
+        .fold(0, |acc: usize, (_, size)| acc + **size)
 }
 
 pub fn main() {
-    let input = include_str!("../inputs/07ex.txt");
+    let input = include_str!("../inputs/07.txt");
 
     println!("part one: {}", solve(input)); //
     println!();
