@@ -15,11 +15,12 @@ fn solve(input: &str) -> (usize, usize) {
     let grid: Vec<Vec<char>> = input.lines().map(|row| row.chars().collect()).collect();
     let w = grid.first().unwrap().len();
     let h = grid.len();
+    let perim = w * 2 + h * 2 - 4;
 
     let mut visible_trees = 0;
     let mut scenic_score = 0;
-    for r in 0..w {
-        for c in 0..h {
+    for r in 1..(w - 1) {
+        for c in 1..(h - 1) {
             let tree = grid[r][c];
 
             let left = (0..c).rev().map(|next| grid[r][next]).collect();
@@ -46,7 +47,7 @@ fn solve(input: &str) -> (usize, usize) {
         }
     }
 
-    (visible_trees, scenic_score)
+    (visible_trees + perim, scenic_score)
 }
 
 pub fn main() {
