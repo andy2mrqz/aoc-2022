@@ -5,10 +5,6 @@ fn abs_path(path: &Vec<String>) -> String {
     format!("/{}", path.iter().skip(1).join("/"))
 }
 
-fn dir_size(dir: Vec<usize>) -> usize {
-    dir.iter().sum()
-}
-
 fn get_sums(input: &str) -> Vec<usize> {
     let mut path = Vec::new();
     let mut stats: HashMap<String, Vec<usize>> = HashMap::new();
@@ -27,15 +23,11 @@ fn get_sums(input: &str) -> Vec<usize> {
         }
     }
 
-    let mut sums: Vec<usize> = Vec::new();
-    for (k, v) in stats.clone() {
-        let mut sum = dir_size(v);
-        for key in stats.keys() {
-            if key != &k && key.starts_with(&k) {
-                sum += dir_size(stats.get(key).unwrap().to_vec());
-            }
+    let mut sums = vec![0; stats.keys().len()]; // preallocate dir sizes
+    for (idx, dir) in stats.keys().enumerate() {
+        for subdir in stats.keys().filter(|subdir| subdir.starts_with(dir)) {
+            sums[idx] += stats.get(subdir).unwrap().to_vec().iter().sum::<usize>()
         }
-        sums.push(sum);
     }
     sums
 }
