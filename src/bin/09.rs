@@ -7,10 +7,7 @@ struct Coord {
 }
 
 fn two_steps_apart(head: &Coord, tail: &Coord) -> bool {
-    (head.y - tail.y >= 2)
-        || (tail.y - head.y >= 2)
-        || (head.x - tail.x >= 2)
-        || (tail.x - head.x >= 2)
+    ((head.y - tail.y).abs() >= 2) || ((head.x - tail.x).abs() >= 2)
 }
 
 fn solve(instructions: &Vec<(char, u32)>, mut knots: Vec<Coord>) -> (usize, usize) {
@@ -51,13 +48,10 @@ fn solve(instructions: &Vec<(char, u32)>, mut knots: Vec<Coord>) -> (usize, usiz
 }
 
 pub fn main() {
-    let input = include_str!("../inputs/09.txt");
-    let instructions: Vec<(char, u32)> = input
+    let input = include_str!("../inputs/09ex.txt");
+    let instructions: Vec<(_, u32)> = input
         .lines()
-        .map(|i| {
-            let (dir, steps) = i.split_once(" ").unwrap();
-            (dir.chars().nth(0).unwrap(), steps.parse().unwrap())
-        })
+        .map(|i| (i.chars().nth(0).unwrap(), i[2..].parse().unwrap()))
         .collect();
 
     let starting_knot = Coord { x: 0, y: 0 };
