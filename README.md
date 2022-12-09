@@ -12,6 +12,8 @@ language I'm interested in or may be using soon.
 | [Supply Stacks](https://adventofcode.com/2022/day/5)           | [Day 5](./src/bin/05.rs) | ⭐     | ⭐     |
 | [Tuning Trouble](https://adventofcode.com/2022/day/6)          | [Day 6](./src/bin/06.rs) | ⭐     | ⭐     |
 | [No Space Left On Device](https://adventofcode.com/2022/day/7) | [Day 7](./src/bin/07.rs) | ⭐     | ⭐     |
+| [Treetop Tree House](https://adventofcode.com/2022/day/8)      | [Day 8](./src/bin/08.rs) | ⭐     | ⭐     |
+| [Rope Bridge](https://adventofcode.com/2022/day/9)             | [Day 9](./src/bin/09.rs) | ⭐     | ⭐     |
 
 ## ⭐ Running the code
 
