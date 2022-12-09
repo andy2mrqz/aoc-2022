@@ -17,15 +17,7 @@ fn diagonal(head: Coord, tail: Coord) -> bool {
     (head != tail) && two_steps_apart(head, tail)
 }
 
-fn solve(input: &str) -> usize {
-    let instructions: Vec<(char, u32)> = input
-        .lines()
-        .map(|i| {
-            let (dir, steps) = i.split_once(" ").unwrap();
-            (dir.chars().nth(0).unwrap(), steps.parse().unwrap())
-        })
-        .collect();
-    //              x, y
+fn solve(instructions: &Vec<(char, u32)>) -> usize {
     let mut head = Coord { x: 0, y: 0 };
     let mut tail = Coord { x: 0, y: 0 };
 
@@ -33,7 +25,7 @@ fn solve(input: &str) -> usize {
     visited.insert(tail);
 
     for (dir, steps) in instructions {
-        for _ in 0..steps {
+        for _ in 0..*steps {
             match dir {
                 'R' => {
                     head.x += 1;
@@ -76,14 +68,20 @@ fn solve(input: &str) -> usize {
             visited.insert(tail);
         }
     }
-
     visited.len()
 }
 
 pub fn main() {
     let input = include_str!("../inputs/09.txt");
 
-    println!("part one: {}", solve(input)); //
-    println!();
-    // println!("part two: {}", solve(input)); //
+    let instructions: Vec<(char, u32)> = input
+        .lines()
+        .map(|i| {
+            let (dir, steps) = i.split_once(" ").unwrap();
+            (dir.chars().nth(0).unwrap(), steps.parse().unwrap())
+        })
+        .collect();
+
+    println!("part one: {}", solve(&instructions)); // 5619
+    println!("part two: {}", solve(&instructions)); //
 }
