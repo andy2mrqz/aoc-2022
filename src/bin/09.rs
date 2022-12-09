@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 
-#[derive(Hash, Eq, PartialEq, Copy, Clone, Debug)]
+#[derive(Hash, Eq, PartialEq, Copy, Clone)]
 struct Coord {
     x: i32,
     y: i32,
@@ -13,13 +13,11 @@ fn two_steps_apart(head: &Coord, tail: &Coord) -> bool {
         || (tail.x - head.x >= 2)
 }
 
-fn diagonal(head: &Coord, tail: &Coord) -> bool {
-    (head != tail) && two_steps_apart(head, tail)
-}
-
-fn solve(instructions: &Vec<(char, u32)>, mut knots: Vec<Coord>) -> usize {
-    let mut visited: HashSet<_> = HashSet::new();
-    visited.insert(knots[0]);
+fn solve(instructions: &Vec<(char, u32)>, mut knots: Vec<Coord>) -> (usize, usize) {
+    let mut visited_part_one: HashSet<_> = HashSet::new();
+    let mut visited_part_two: HashSet<_> = HashSet::new();
+    visited_part_one.insert(knots[0]);
+    visited_part_two.insert(knots[0]);
 
     for (dir, steps) in instructions {
         for _ in 0..*steps {
@@ -40,34 +38,25 @@ fn solve(instructions: &Vec<(char, u32)>, mut knots: Vec<Coord>) -> usize {
                     } else {
                         curr.x += if next.x > curr.x { 1 } else { -1 }
                     }
-                } else if diagonal(&next, curr) {
-                    if next.x > curr.x && next.y > curr.y {
-                        curr.x += 1;
-                        curr.y += 1;
-                    } else if next.x > curr.x && next.y < curr.y {
-                        curr.x += 1;
-                        curr.y -= 1;
-                    } else if next.x < curr.x && next.y > curr.y {
-                        curr.x -= 1;
-                        curr.y += 1;
-                    } else if next.x < curr.x && next.y < curr.y {
-                        curr.x -= 1;
-                        curr.y -= 1;
-                    }
+                } else if two_steps_apart(&next, curr) && &next != curr {
+                    curr.x += if next.x > curr.x { 1 } else { -1 };
+                    curr.y += if next.y > curr.y { 1 } else { -1 };
                 }
                 if idx == knots.len() - 1 {
                     let tail = *knots.get(knots.len() - 1).unwrap();
-                    visited.insert(tail);
+                    visited_part_two.insert(tail);
+                } else if idx == 1 {
+                    let tail = *knots.get(1).unwrap();
+                    visited_part_one.insert(tail);
                 }
             }
         }
     }
-    visited.len()
+    (visited_part_one.len(), visited_part_two.len())
 }
 
 pub fn main() {
     let input = include_str!("../inputs/09.txt");
-
     let instructions: Vec<(char, u32)> = input
         .lines()
         .map(|i| {
@@ -77,7 +66,8 @@ pub fn main() {
         .collect();
 
     let starting_knot = Coord { x: 0, y: 0 };
+    let answer = solve(&instructions, vec![starting_knot; 10]);
 
-    println!("part one: {}", solve(&instructions, vec![starting_knot; 2])); // 5619
-    println!("part two: {}", solve(&instructions, vec![starting_knot; 10])); // 2376
+    println!("part one: {}", answer.0); // 5619
+    println!("part two: {}", answer.1); // 2376
 }
