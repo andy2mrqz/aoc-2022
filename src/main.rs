@@ -5,7 +5,7 @@ fn main() {
     println!("🎄 Advent of Code 🎄");
     println!();
 
-    for day in 1..=9 {
+    for day in 1..=10 {
         let day = format!("{:02}", day);
         let cmd = Command::new("cargo")
             .args(["run", "--bin", &day])
