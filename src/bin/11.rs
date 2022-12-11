@@ -38,10 +38,8 @@ fn parse_input(input: &str) -> Vec<Monkey> {
         .collect()
 }
 
-fn solve(input: &str) -> usize {
-    let mut monkeys = parse_input(input);
-
-    for _ in 0..20 {
+fn solve(mut monkeys: Vec<Monkey>, rounds: usize, cope_fn: &dyn Fn(usize) -> usize) -> usize {
+    for _ in 0..rounds {
         for i in 0..monkeys.len() {
             for _ in 0..monkeys[i].items.len() {
                 let item = monkeys[i].items.pop_front().unwrap();
@@ -52,11 +50,11 @@ fn solve(input: &str) -> usize {
                     _ => operand.parse().unwrap(),
                 };
                 let operator: &str = monkeys[i].op.0.as_ref();
-                let new_worry_level = match operator {
-                    "*" => (item * operand) / 3,
-                    "+" => (item + operand) / 3,
+                let new_worry_level = cope_fn(match operator {
+                    "*" => item * operand,
+                    "+" => item + operand,
                     _ => unreachable!(),
-                };
+                });
                 let test_result = new_worry_level
                     .rem_euclid(monkeys[i].test_divisible_by)
                     .eq(&0);
@@ -75,6 +73,9 @@ fn solve(input: &str) -> usize {
 
 pub fn main() {
     let input = include_str!("../inputs/11.txt");
-    println!("part one: {}", solve(input)); //
-                                            // println!("part two: {}", solve(input)); //
+    let monkeys = parse_input(input);
+    let base: usize = monkeys.iter().map(|m| m.test_divisible_by).product();
+
+    println!("part one: {}", solve(monkeys.clone(), 20, &|x| x / 3)); // 120384
+    println!("part two: {}", solve(monkeys, 10_000, &|x| x % base)); // 32059801242
 }
