@@ -1,0 +1,5 @@
+# To use this file (requires git 2.23):
+#   git config blame.ignoreRevsFile .git-blame-ignore-revs
+
+# restructure into module
+eefe3eb0c274a73b4a8a3861655d131731f7dd89
