@@ -1,59 +1,39 @@
-fn part_one(instructions: Vec<(usize, i32)>) -> i32 {
-    let mut signal_strength = Vec::new();
+fn solve(instructions: Vec<(usize, i32)>) -> (i32, Vec<char>) {
+    let mut signal_strength = 0;
     let mut x = 1;
-    let mut cycle: i32 = 1;
-
-    for (cost, value) in instructions {
-        for i in 1..=cost {
-            if cycle.rem_euclid(40) == 20 {
-                signal_strength.push(cycle * x);
-            }
-            cycle += 1;
-            if i == cost {
-                x += value;
-            }
-        }
-    }
-
-    signal_strength.iter().sum()
-}
-
-fn part_two(instructions: Vec<(usize, i32)>) -> () {
-    let mut x: i32 = 1;
     let mut cycle: i32 = 1;
     let mut crt = vec!['.'; 240];
 
     for (cost, value) in instructions {
-        for i in 1..=cost {
-            if ((x - 1)..=(x + 1)).contains(&(cycle - 1).rem_euclid(40)) {
+        for _ in 1..=cost {
+            if cycle.rem_euclid(40) == 20 {
+                signal_strength += cycle * x;
+            }
+            if (x..=(x + 2)).contains(&(cycle).rem_euclid(40)) {
                 crt[cycle as usize - 1] = '#';
             }
             cycle += 1;
-            if i == cost {
-                x += value;
-            }
         }
+        x += value;
     }
 
-    for line in crt.chunks(40) {
-        println!("{:?}", String::from_iter(line))
-    }
+    (signal_strength, crt)
 }
 
 pub fn main() {
     let input = include_str!("../inputs/10.txt");
-    let instructions: Vec<(usize, i32)> = input
+    let instructions = input
         .lines()
-        .map(|line| {
-            if line == "noop" {
-                (1, 0)
-            } else {
-                (2, line[5..].parse().unwrap())
-            }
+        .map(|line| match line {
+            "noop" => (1, 0),
+            _ => (2, line[5..].parse().unwrap()),
         })
         .collect();
 
-    println!("part one: {}", part_one(instructions.clone())); // 13820
-    println!("part two");
-    part_two(instructions); // ZKGRKGRK
+    let answers = solve(instructions);
+    println!("part one: {}", answers.0); // 13820
+    println!("part two"); // ZKGRKGRK
+    for line in answers.1.chunks(40) {
+        println!("{:?}", String::from_iter(line))
+    }
 }
