@@ -15,6 +15,7 @@ language I'm interested in or may be using soon.
 | [Treetop Tree House](https://adventofcode.com/2022/day/8)      | [Day 8](./src/bin/08.rs)  | ⭐     | ⭐     |
 | [Rope Bridge](https://adventofcode.com/2022/day/9)             | [Day 9](./src/bin/09.rs)  | ⭐     | ⭐     |
 | [Cathode-Ray Tube](https://adventofcode.com/2022/day/10)       | [Day 10](./src/bin/10.rs) | ⭐     | ⭐     |
+| [Monkey in the Middle](https://adventofcode.com/2022/day/11)   | [Day 11](./src/bin/11.rs) | ⭐     | ⭐     |
 
 ## ⭐ Running the code
 
