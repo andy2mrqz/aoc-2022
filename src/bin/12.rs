@@ -1,29 +1,32 @@
+struct Input {
+    grid: Vec<Vec<char>>,
+    start: (usize, usize),
+    end: (usize, usize),
+}
+
 #[derive(Copy, Clone, Eq, PartialEq)]
 struct Dist {
     steps: usize,
     position: (usize, usize),
 }
 
-fn parse_input(input: &str) -> (Vec<Vec<char>>, (usize, usize), (usize, usize)) {
+fn parse_input(input: &str) -> Input {
     let grid: Vec<Vec<char>> = input.lines().map(|row| row.chars().collect()).collect();
-    let w = grid.first().unwrap().len();
-    let h = grid.len();
 
     let mut start = (0, 0);
     let mut end = (0, 0);
 
-    for r in 0..h {
-        for c in 0..w {
-            if grid[r][c] == 'S' {
-                start = (r, c);
-            }
-            if grid[r][c] == 'E' {
-                end = (r, c);
+    for r in 0..grid.len() {
+        for c in 0..grid.first().unwrap().len() {
+            match grid[r][c] {
+                'S' => start = (r, c),
+                'E' => end = (r, c),
+                _ => {}
             }
         }
     }
 
-    (grid, start, end)
+    Input { grid, start, end }
 }
 
 fn neighbors(cell: (usize, usize), w: usize, h: usize) -> Vec<(usize, usize)> {
@@ -52,14 +55,14 @@ fn height(grid: &Vec<Vec<char>>, position: (usize, usize)) -> char {
     }
 }
 
-fn solve(grid: Vec<Vec<char>>, start: (usize, usize), end: (usize, usize)) -> usize {
-    let mut queue = Vec::new();
-
+fn solve(Input { grid, start, end }: Input) -> usize {
     let w = grid.first().unwrap().len();
     let h = grid.len();
-    let mut dist = vec![vec![usize::MAX; w]; h];
 
+    let mut dist = vec![vec![usize::MAX; w]; h];
     dist[start.0][start.1] = 0;
+
+    let mut queue = Vec::new();
     queue.push(Dist {
         steps: 0,
         position: start,
@@ -91,7 +94,7 @@ fn solve(grid: Vec<Vec<char>>, start: (usize, usize), end: (usize, usize)) -> us
 
 pub fn main() {
     let input = include_str!("../inputs/12.txt");
-    let parsed = parse_input(input);
-    println!("part one: {}", solve(parsed.0, parsed.1, parsed.2)); //
-                                                                   // println!("part two: {}", solve(input)); //
+    let parsed_input = parse_input(input);
+    println!("part one: {}", solve(parsed_input)); // 408
+                                                   // println!("part two: {}", solve(input)); //
 }
