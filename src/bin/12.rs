@@ -1,32 +1,7 @@
-struct Input {
-    grid: Vec<Vec<char>>,
-    start: (usize, usize),
-    end: (usize, usize),
-}
-
 #[derive(Copy, Clone, Eq, PartialEq)]
 struct Dist {
     steps: usize,
     position: (usize, usize),
-}
-
-fn parse_input(input: &str) -> Input {
-    let grid: Vec<Vec<char>> = input.lines().map(|row| row.chars().collect()).collect();
-
-    let mut start = (0, 0);
-    let mut end = (0, 0);
-
-    for r in 0..grid.len() {
-        for c in 0..grid.first().unwrap().len() {
-            match grid[r][c] {
-                'S' => start = (r, c),
-                'E' => end = (r, c),
-                _ => {}
-            }
-        }
-    }
-
-    Input { grid, start, end }
 }
 
 fn neighbors(cell: (usize, usize), w: usize, h: usize) -> Vec<(usize, usize)> {
@@ -55,7 +30,7 @@ fn height(grid: &Vec<Vec<char>>, position: (usize, usize)) -> char {
     }
 }
 
-fn solve(Input { grid, start, end }: Input) -> usize {
+fn solve(grid: &Vec<Vec<char>>, start: (usize, usize), end: (usize, usize)) -> usize {
     let w = grid.first().unwrap().len();
     let h = grid.len();
 
@@ -94,7 +69,33 @@ fn solve(Input { grid, start, end }: Input) -> usize {
 
 pub fn main() {
     let input = include_str!("../inputs/12.txt");
-    let parsed_input = parse_input(input);
-    println!("part one: {}", solve(parsed_input)); // 408
-                                                   // println!("part two: {}", solve(input)); //
+    let grid: Vec<Vec<char>> = input.lines().map(|row| row.chars().collect()).collect();
+
+    let mut start = (0, 0);
+    let mut end = (0, 0);
+    let mut starting_options = Vec::new();
+
+    for r in 0..grid.len() {
+        for c in 0..grid.first().unwrap().len() {
+            match grid[r][c] {
+                'S' => {
+                    start = (r, c);
+                    starting_options.push((r, c));
+                }
+                'a' => starting_options.push((r, c)),
+                'E' => end = (r, c),
+                _ => {}
+            }
+        }
+    }
+
+    println!("part one: {}", solve(&grid, start, end)); // 408
+
+    // probably a faster algorithm but this worked with --release 🙈
+    let mut fewest_steps = usize::MAX;
+    for option in starting_options {
+        let steps = solve(&grid, option, end);
+        fewest_steps = std::cmp::min(steps, fewest_steps);
+    }
+    println!("part two: {}", fewest_steps); //
 }
